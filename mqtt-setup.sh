@@ -14,10 +14,15 @@ systemctl mask mosquitto.service
 # Fix
 sudo mkdir -p /var/run/mosquitto && sudo chown mosquitto: /var/run/mosquitto
 
-# Install nextmsg
-install -m 0755 nextmsg /usr/local/bin
-
-cp newhostname.sh mqtt.py /home/user
+# Set initial font for xterm
+XRESOURCES=$HOME/.Xresources
+touch $XRESOURCES
+grep -q -E -e "^xterm*faceName" $XRESOURCES
+if [ $? -ne 0 ]; then
+   echo "xterm*faceName: Monospace" > $HOME/.Xresources
+   echo "xterm*faceSize: 14" >> $HOME/.Xresources
+   xrdb -merge $HOME/.Xresources
+fi
 
 echo -e "\n\n *** Please restart the Virtual Machine *** "
 
