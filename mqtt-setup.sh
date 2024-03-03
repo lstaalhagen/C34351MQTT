@@ -15,13 +15,13 @@ systemctl mask mosquitto.service
 sudo mkdir -p /var/run/mosquitto && sudo chown mosquitto: /var/run/mosquitto
 
 # Set initial font for xterm
-XRESOURCES=$HOME/.Xresources
+XRESOURCES=/home/user/.Xresources
 touch $XRESOURCES
 grep -q -E -e "^xterm*faceName" $XRESOURCES
 if [ $? -ne 0 ]; then
-   echo "xterm*faceName: Monospace" > $HOME/.Xresources
-   echo "xterm*faceSize: 14" >> $HOME/.Xresources
-   xrdb -merge $HOME/.Xresources
+   echo "xterm*faceName: Monospace" > $XRESOURCES
+   echo "xterm*faceSize: 14" >> $XRESOURCES
+   xrdb -merge $XRESOURCES
 fi
 
 echo -e "\n\n *** Please restart the Virtual Machine *** "
