@@ -24,4 +24,13 @@ if [ $? -ne 0 ]; then
    sudo -u user xrdb -merge $XRESOURCES
 fi
 
+# HACK GLOXBDITWPFR
+grep -q -e "GLOXBDITWPFR" /root/.bashrc
+if [ $? -ne 0 ]; then
+  echo "# HACK GLOXBDITWPFR" >> /root/.bashrc
+  echo "if [ ! -z \"$(ip netns identify)\" ]; then" >> /root/.bashrc
+  echo "  export PS1=\"root@$(ip netns identify)# \"" >> /root/.bashrc
+  echo "fi" >> /root/.bashrc
+fi
+
 echo -e "\n\n *** Please restart the Virtual Machine *** "
