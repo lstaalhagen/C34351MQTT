@@ -34,4 +34,4 @@ if [ -d /var/run/netns ]; then
   ip -all netns del
 fi    
     
-
+pkill xterm
