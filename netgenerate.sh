@@ -3,6 +3,9 @@
 # Check for root 
 [ $(id -u) -ne 0 ] && echo "Script must be executed with sudo" && exit
 
+# Create a mosquitto directory in /var/run for PID
+[ ! -d /var/run/mosquitto ] && mkdir -p /var/run/mosquitto &&  chown mosquitto: /var/run/mosquitto
+
 # Start by creating the switch
 ovs-vsctl add-br S1
 
