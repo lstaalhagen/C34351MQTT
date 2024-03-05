@@ -17,7 +17,7 @@ touch $XRESOURCES
 grep -q -E -e "^xterm*faceName" $XRESOURCES
 if [ $? -ne 0 ]; then
    echo "xterm*faceName: Monospace" > $XRESOURCES
-   echo "xterm*faceSize: 14" >> $XRESOURCES
+   echo "xterm*faceSize: 12" >> $XRESOURCES
    sudo -u user xrdb -merge $XRESOURCES
 fi
 
