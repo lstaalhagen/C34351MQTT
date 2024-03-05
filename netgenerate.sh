@@ -9,6 +9,7 @@
 XTERMS="YES"
 if [ "${1}" = "--nox" ]; then
   XTERMS="NO"
+  shift
 fi
 
 # Start by creating the switch
