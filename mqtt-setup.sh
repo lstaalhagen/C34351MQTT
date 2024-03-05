@@ -11,9 +11,6 @@ apt-get -y install mosquitto mosquitto-clients
 systemctl stop mosquitto.service
 systemctl mask mosquitto.service
 
-# Fix
-sudo mkdir -p /var/run/mosquitto && sudo chown mosquitto: /var/run/mosquitto
-
 # Set initial font for xterm
 XRESOURCES=/home/user/.Xresources
 touch $XRESOURCES
