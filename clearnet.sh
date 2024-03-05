@@ -3,6 +3,9 @@
 # Check for root 
 [ $(id -u) -ne 0 ] && echo "Script must be executed with sudo" && exit
 
+# Check and kill
+[ "$TERM" = "xterm" ] && echo "Please execute script in normal terminal" && exit
+
 # Delete switches
 for br in $(ovs-vsctl list-br); do
   for p in $(ovs-vsctl list-ports $br); do
