@@ -6,6 +6,9 @@
 # Create a mosquitto directory in /var/run for PID
 [ ! -d /var/run/mosquitto ] && mkdir -p /var/run/mosquitto &&  chown mosquitto: /var/run/mosquitto
 
+# Run clearnet just to be on the safe side
+. /home/user/C34351MQTT/clearnet.sh
+
 XTERMS="YES"
 if [ "${1}" = "--nox" ]; then
   XTERMS="NO"
