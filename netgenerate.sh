@@ -79,9 +79,7 @@ while [ $NS -le $NUMHOSTS ]; do
   ovs-vsctl add-port S1 "veth${NS}1"
 
   # Open an xterm window on the host (conditionally)
-  if [ "${NOXTERMS}" = "FALSE" ]; then
-    ip netns exec "H${NS}" xterm -title "Host H${NS} (10.0.0.${NS})" &
-  fi
+  [ "${NOXTERMS}" = "FALSE" ] && ip netns exec "H${NS}" xterm -title "Host H${NS} (10.0.0.${NS})" &
 
   NS=$(($NS + 1))
 done
@@ -89,6 +87,4 @@ done
 # Finally, activate the switch
 ip link set S1 up
 
-if [ "${QUIET}" = "FALSE" ]; then
-  echo "Done. Virtual network with ${NUMHOSTS} has been created."
-fi
+[ "${QUIET}" = "FALSE" ] && echo "Done. Virtual network with ${NUMHOSTS} has been created."
