@@ -10,7 +10,7 @@ while [[ $# -gt 0 ]]; do
       HELP="TRUE"
       shift
       ;;
-    --noxterms)
+    -x|--noxterms)
       NOXTERMS="TRUE"
       shift
       ;;
@@ -20,7 +20,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -q|--quiet)
-      QUIET=TRUE
+      QUIET="TRUE"
       shift
       ;;
     -*|--*)
@@ -34,11 +34,13 @@ if [ ! -z "${HELP}" ]; then
   echo "Usage: "
   echo "   ${0} -h : Displays this message"
   echo " "
-  echo "   ${0} [--noxterms] [-n|--numhosts N]"
+  echo "   ${0} [--noxterms] [-n|--numhosts N] [-q|--quiet]"
   echo "      Creates virtual network with hosts connected to a switch. Unless the"
-  echo "      '--noxterms' option is given, the script also opens an Xterm window"
-  echo "      on each host. If the '-n' or '--numhosts' option is given, N hosts"
-  echo "      are created; otherwise 3 hosts are created."
+  echo "      '-x' or '--noxterms' option is given, the script also opens an Xterm"
+  echo "      window on each host. If the '-n' or '--numhosts' option is given, N"
+  echo "      hosts are created; otherwise 3 hosts are created. If the '-q' or"
+  echo "      '--quiet' option is given then the script produces no output if"
+  echo "      successful."
   exit
 fi
 
@@ -87,6 +89,6 @@ done
 # Finally, activate the switch
 ip link set S1 up
 
-if [ "{QUIET}" = "FALSE" ]; then
+if [ "${QUIET}" = "FALSE" ]; then
   echo "Done. Virtual network with ${NUMHOSTS} has been created."
 fi
