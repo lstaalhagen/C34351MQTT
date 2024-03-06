@@ -3,6 +3,7 @@
 # Parse command line parameters
 NUMHOSTS="3"
 NOXTERMS="FALSE"
+QUIET="FALSE"
 while [[ $# -gt 0 ]]; do
   case $1 in
     -h|--help)
@@ -16,6 +17,10 @@ while [[ $# -gt 0 ]]; do
     -n|--numhosts)
       NUMHOSTS="$2"
       shift
+      shift
+      ;;
+    -q|--quiet)
+      QUIET=TRUE
       shift
       ;;
     -*|--*)
@@ -50,32 +55,38 @@ fi
 ovs-vsctl add-br S1
 if [ $? -ne 0 ]; then
   echo "Failed to add switch. Did you forget to run clearnet.sh after last time? Aborting ..."
-  exit
+  exit 1
 fi 
 
 NS=1
 while [ $NS -le $NUMHOSTS ]; do
-  # Create a namespace
+  # Create a namespace for a host
   ip netns add "H${NS}"
 
-  # Create a veth pair
+  # Create a veth pair in the default namespace and move endpoint to host namespace
   ip link add "veth${NS}1" type veth peer name "veth${NS}2"
   ip link set "veth${NS}2" netns "H${NS}"
 
-  # Bring up
+  # Bring up veth endpoints
   ip netns exec "H${NS}" ip link set dev lo up
   ip netns exec "H${NS}" ip addr add "10.0.0.${NS}/8" dev "veth${NS}2"
   ip netns exec "H${NS}" ip link set dev "veth${NS}2" up
   ip link set dev "veth${NS}1" up
 
-  # Attach to switch
+  # Attach veth endpoint in default namespace to switch
   ovs-vsctl add-port S1 "veth${NS}1"
 
-  # Open an xterm window on the host
+  # Open an xterm window on the host (conditionally)
   if [ "${NOXTERMS}" = "FALSE" ]; then
     ip netns exec "H${NS}" xterm -title "Host H${NS} (10.0.0.${NS})" &
   fi
 
   NS=$(($NS + 1))
 done
+
+# Finally, activate the switch
 ip link set S1 up
+
+if [ "{QUIET}" = "FALSE" ]; then
+  echo "Done. Virtual network with ${NUMHOSTS} has been created."
+fi
