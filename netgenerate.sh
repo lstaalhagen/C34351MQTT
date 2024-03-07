@@ -87,4 +87,4 @@ done
 # Finally, activate the switch
 ip link set S1 up
 
-[ "${QUIET}" = "FALSE" ] && echo "Done. Virtual network with ${NUMHOSTS} has been created."
+[ "${QUIET}" = "FALSE" ] && echo "Done. Virtual network with ${NUMHOSTS} hosts has been created."
