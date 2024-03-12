@@ -3,9 +3,14 @@
 # Parse command line parameters
 NUMHOSTS="3"
 NOXTERMS="FALSE"
-QUIET="FALSE"
+IPVERSION="4"
+VERBOSE="FALSE"
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -6|--ipv6)
+      IPVERSION="6"
+      shift
+      ;;
     -h|--help)
       HELP="TRUE"
       shift
@@ -19,8 +24,8 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
-    -q|--quiet)
-      QUIET="TRUE"
+    -v)
+      VERBOSE="TRUE"
       shift
       ;;
     -*|--*)
@@ -34,13 +39,17 @@ if [ ! -z "${HELP}" ]; then
   echo "Usage: "
   echo "   ${0} -h : Displays this message"
   echo " "
-  echo "   ${0} [--noxterms] [-n|--numhosts N] [-q|--quiet]"
-  echo "      Creates virtual network with hosts connected to a switch. Unless the"
-  echo "      '-x' or '--noxterms' option is given, the script also opens an Xterm"
-  echo "      window on each host. If the '-n' or '--numhosts' option is given, N"
-  echo "      hosts are created; otherwise 3 hosts are created. If the '-q' or"
-  echo "      '--quiet' option is given then the script produces no output if"
-  echo "      successful."
+  echo "   ${0} [-x|--noxterms] [-n|--numhosts N] [-6|--ipv6] [-q|--quiet]"
+  echo "      Creates virtual network with hosts connected to a switch. By default,"
+  echo "      the script creates a virtual network with three hosts connect to a"
+  echo "      virtual switch, assigning IPv4 addresses from the 10.0.0.0/8 address"
+  echo "      range, opens an Xterm window on each host, and writing a status message"
+  echo "      at the end. The behaviour may be modified with the following options:"
+  echo "        -x | --noxterms : Do not open Xterm windows on the hosts."
+  echo "        -n | --numhosts : Create N hosts instead of three."
+  echo "        -6 | --ipv6     : Assign IPv6 addresses (from the fd00::/8 range)"
+  echo "                          instead of IPv4 addresses."
+  echo "        -v              : Write a status message at the end of the script."
   exit
 fi
 
@@ -71,15 +80,27 @@ while [ $NS -le $NUMHOSTS ]; do
 
   # Bring up veth endpoints
   ip netns exec "H${NS}" ip link set dev lo up
-  ip netns exec "H${NS}" ip addr add "10.0.0.${NS}/8" dev "veth${NS}2"
+  if [ "${IPVERSION}" = "4" ]; then
+    ip netns exec "H${NS}" ip addr add "10.0.0.${NS}/8" dev "veth${NS}2"
+  else
+    ip netns exec "H${NS}" ip addr add "fd00::${NS}/8" dev "veth${NS}2"
+  fi
   ip netns exec "H${NS}" ip link set dev "veth${NS}2" up
   ip link set dev "veth${NS}1" up
+
+  # Code to delete the link local address in the namespace
+  if [ "${IPVERSION}" = "6" ]; then
+    IPLL=$(ip netns exec "H${NS}" ip addr show dev "veth${NS}2"|grep -e "inet6 fe80::"|awk '{print $2}')
+    if [ ! -z "${IPLL}" ]; then
+      ip netns exec "H${NS}" ip addr del "${IPLL}" dev "veth${NS}2"
+    fi
+  fi
 
   # Attach veth endpoint in default namespace to switch
   ovs-vsctl add-port S1 "veth${NS}1"
 
   # Open an xterm window on the host (conditionally)
-  [ "${NOXTERMS}" = "FALSE" ] && ip netns exec "H${NS}" xterm -title "Host H${NS} (10.0.0.${NS})" &
+  [ "${NOXTERMS}" = "FALSE" ] && ip netns exec "H${NS}" xterm -title "Host H${NS}" &
 
   NS=$(($NS + 1))
 done
@@ -87,4 +108,4 @@ done
 # Finally, activate the switch
 ip link set S1 up
 
-[ "${QUIET}" = "FALSE" ] && echo "Done. Virtual network with ${NUMHOSTS} hosts has been created."
+[ "${VERBOSE}" = "TRUE" ] && echo "Done. Virtual network with ${NUMHOSTS} hosts has been created."
