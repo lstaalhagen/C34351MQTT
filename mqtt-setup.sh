@@ -20,12 +20,12 @@ if [ -s $XRESOURCES ]; then
   if [ $? -ne 0 ]; then
     echo "xterm*faceName: Monospace" >> $XRESOURCES
     echo "xterm*faceSize: 14" >> $XRESOURCES
-    sudo -u ${REALUSER} "xrdb -merge $XRESOURCES"
+    sudo -u ${REALUSER} xrdb -merge $XRESOURCES
   fi
 else
   echo "xterm*faceName: Monospace" > $XRESOURCES
   echo "xterm*faceSize: 14" >> $XRESOURCES
-  sudo -u ${REALUSER} "xrdb -merge $XRESOURCES"
+  sudo -u ${REALUSER} xrdb -merge $XRESOURCES
 fi
 
 # HACK GLOXBDITWPFR
