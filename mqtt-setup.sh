@@ -29,6 +29,7 @@ else
   echo "xterm*faceSize: 14" >> $XRESOURCES
   sudo -u ${REALUSER} xrdb -merge $XRESOURCES
 fi
+chown ${REALUSER}: $XRESOURCES
 
 # HACK GLOXBDITWPFR
 grep -q -e "GLOXBDITWPFR" /root/.bashrc

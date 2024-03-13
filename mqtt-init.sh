@@ -11,3 +11,6 @@
 
 # Run clearnet just to be on the safe side
 [ -s ./clearnet.sh ] && . ./clearnet.sh
+
+echo "Done! Your VM is now setup for the MQTT tasks. Happy MQTT'ing"
+
