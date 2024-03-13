@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Script to create a simple virtual network for exercises in course 34351
+# (C) Copyright 2024, Lars Staalhagen
+
 # Parse command line parameters
 NUMHOSTS="3"
 NOXTERMS="FALSE"
@@ -60,7 +63,7 @@ fi
 [ ! -d /var/run/mosquitto ] && mkdir -p /var/run/mosquitto &&  chown mosquitto: /var/run/mosquitto
 
 # Run clearnet just to be on the safe side
-. /home/user/C34351MQTT/clearnet.sh
+[ -s ./clearnet.sh ] && . ./clearnet.sh
 
 # Start by creating the switch
 ovs-vsctl add-br S1
