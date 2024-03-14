@@ -59,6 +59,9 @@ fi
 # Check for root 
 [ $(id -u) -ne 0 ] && echo "Script must be executed with sudo" && exit 1
 
+# Check for terminal
+[ "$TERM" = "xterm" ] && echo "Please execute script in normal terminal" && exit
+
 # Run clearnet just to be on the safe side
 [ -s ./clearnet.sh ] && . ./clearnet.sh
 
